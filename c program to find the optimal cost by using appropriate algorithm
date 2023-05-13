@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define MAX_VERTICES 10
+
+int minDistance(int dist[], bool visited[], int n) {
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < n; v++) {
+        if (visited[v] == false && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+
+    return min_index;
+}
+
+void printSolution(int dist[], int n) {
+    printf("Vertex\t\tDistance from Source\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t%d\n", i, dist[i]);
+    }
+}
+
+void dijkstra(int graph[MAX_VERTICES][MAX_VERTICES], int src, int n) {
+    int dist[MAX_VERTICES];
+    bool visited[MAX_VERTICES];
+
+    for (int i = 0; i < n; i++) {
+        dist[i] = INT_MAX;
+        visited[i] = false;
+    }
+
+    dist[src] = 0;
+
+    for (int count = 0; count < n - 1; count++) {
+        int u = minDistance(dist, visited, n);
+
+        visited[u] = true;
+
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && graph[u][v] && dist[u] != INT_MAX &&
+                dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+
+    printSolution(dist, n);
+}
+
+int main() {
+    int n, graph[MAX_VERTICES][MAX_VERTICES];
+    printf("Enter the number of vertices in the graph (maximum 10): ");
+    scanf("%d", &n);
+    printf("Enter the weighted adjacency matrix of the graph:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+    int source;
+    printf("Enter the source vertex: ");
+    scanf("%d", &source);
+
+    dijkstra(graph, source, n);
+
+    return 0;
+}
